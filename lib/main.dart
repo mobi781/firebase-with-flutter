@@ -8,7 +8,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
 
   /// The future is part of the state of our widget. We should not call `initializeApp`
   /// directly inside [build,].
