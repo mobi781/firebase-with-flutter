@@ -8,17 +8,16 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController userEmailController = TextEditingController();
+  final TextEditingController userPasswordController = TextEditingController();
+  void collectData() {
+    final String username = userNameController.text;
+    print("signup Button pressed and username value is " + username);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController userNameController = TextEditingController();
-    final TextEditingController userEmailController = TextEditingController();
-    final TextEditingController userPasswordController =
-        TextEditingController();
-    void collectData() {
-      final String username = userNameController.text;
-      print("signup Button pressed and username value is " + username);
-    }
-
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
