@@ -3,51 +3,37 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // ignore: use_key_in_widget_constructors
-class Register extends StatefulWidget {
-  //  Register({Key? key}) : super(key: key);
+class Login extends StatefulWidget {
+  //  Login({Key? key}) : super(key: key);
 
   @override
-  State<Register> createState() => _RegisterState();
+  State<Login> createState() => _LoginState();
 }
 
-class _RegisterState extends State<Register> {
-  final TextEditingController userNameController = TextEditingController();
+class _LoginState extends State<Login> {
   final TextEditingController userEmailController = TextEditingController();
   final TextEditingController userPasswordController = TextEditingController();
-  void collectData() async {
+
+  void login() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final String username = userNameController.text;
+
     final String email = userEmailController.text;
     final String password = userPasswordController.text;
+
     try {
-      final UserCredential userId =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      await firestore.collection("client").doc(userId.user.uid).set({
-        "userName": username,
-        "email": email,
-      });
-      // it will clear inputfields
-      userNameController.clear();
-      userEmailController.clear();
-      userPasswordController.clear();
-    }
-    //on FirebaseAuthException catch (e) {
-    //   if (e.code == 'weak-password') {
-    //     print('The password provided is too weak.');
-    //   } else if (e.code == 'email-already-in-use') {
-    //     print('The account already exists for that email.');
-    //   }
-    // }
-    catch (e) {
-      print(e);
+      final UserCredential users = await auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      final DocumentSnapshot snapshot =
+          await firestore.collection("client").doc(users.user.uid).get();
+      final userData = snapshot.data();
+      print(userData['email']);
+      print("User is Logged in");
+    } catch (e) {
+      print("we got following error :" + e);
     }
     // ignore: avoid_print
-    print("signup Button pressed and username value is " + username);
-    print("Congratulations " + username + "has been added to database");
   }
 
   @override
@@ -67,13 +53,6 @@ class _RegisterState extends State<Register> {
                   ),
                   const SizedBox(
                     height: 30,
-                  ),
-                  TextFormField(
-                    controller: userNameController,
-                    decoration: const InputDecoration(
-                        labelText: "User Name",
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter User Name'),
                   ),
                   const SizedBox(
                     height: 5,
@@ -95,8 +74,7 @@ class _RegisterState extends State<Register> {
                         border: OutlineInputBorder(),
                         hintText: 'Enter Password'),
                   ),
-                  ElevatedButton(
-                      onPressed: collectData, child: const Text("SIGN UP"))
+                  ElevatedButton(onPressed: login, child: const Text("SIGN IN"))
                 ],
               ),
             ),
