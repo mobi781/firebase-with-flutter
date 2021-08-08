@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+// ignore: use_key_in_widget_constructors
 class Register extends StatefulWidget {
   //  Register({Key? key}) : super(key: key);
 
@@ -11,19 +14,50 @@ class _RegisterState extends State<Register> {
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController userEmailController = TextEditingController();
   final TextEditingController userPasswordController = TextEditingController();
-  void collectData() {
+  void collectData() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
     final String username = userNameController.text;
+    final String email = userEmailController.text;
+    final String password = userPasswordController.text;
+    try {
+      final UserCredential userId =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await firestore.collection("client").doc(userId.user.uid).set({
+        "userName": username,
+        "email": email,
+      });
+      // it will clear inputfields
+      userNameController.clear();
+      userEmailController.clear();
+      userPasswordController.clear();
+    }
+    //on FirebaseAuthException catch (e) {
+    //   if (e.code == 'weak-password') {
+    //     print('The password provided is too weak.');
+    //   } else if (e.code == 'email-already-in-use') {
+    //     print('The account already exists for that email.');
+    //   }
+    // }
+    catch (e) {
+      print(e);
+    }
+    // ignore: avoid_print
     print("signup Button pressed and username value is " + username);
+    print("Congratulations " + username + "has been added to database");
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
+      home: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: SafeArea(
               child: Column(
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
@@ -36,7 +70,7 @@ class _RegisterState extends State<Register> {
                   ),
                   TextFormField(
                     controller: userNameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "User Name",
                         border: OutlineInputBorder(),
                         hintText: 'Enter User Name'),
@@ -46,7 +80,7 @@ class _RegisterState extends State<Register> {
                   ),
                   TextFormField(
                     controller: userEmailController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Email",
                         border: OutlineInputBorder(),
                         hintText: 'Enter Your Email Address'),
@@ -56,7 +90,7 @@ class _RegisterState extends State<Register> {
                   ),
                   TextFormField(
                     controller: userPasswordController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Password",
                         border: OutlineInputBorder(),
                         hintText: 'Enter Password'),

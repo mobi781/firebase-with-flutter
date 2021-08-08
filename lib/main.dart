@@ -7,23 +7,27 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+// ignore: use_key_in_widget_constructors
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> {
   /// The future is part of the state of our widget. We should not call `initializeApp`
   /// directly inside [build,].
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-  // SomethingWentWrong() {
-  //   return Container(
-  //     width: 200,
-  //     height: 200,
-  //     child: Text("there is some error occured"),
-  //   );
-  // }
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // return MaterialApp(
+    //   home: Scaffold(
+    //     appBar: AppBar(
+    //       title: Text("Quiz App"),
+    //     ),
+    //     body: Text("hello from Mubashar"),
+    //   ),
+    // );
     return FutureBuilder(
       // Initialize FlutterFire:
       future: _initialization,
