@@ -27,9 +27,10 @@ class _LoginState extends State<Login> {
 
       final DocumentSnapshot snapshot =
           await firestore.collection("client").doc(users.user.uid).get();
-      final userData = snapshot.data();
-      print(userData['email']);
+      final user = snapshot.data();
+      print(user);
       print("User is Logged in");
+      Navigator.of(context).pushNamed("/home");
     } catch (e) {
       print("we got following error :" + e);
     }
@@ -74,6 +75,10 @@ class _LoginState extends State<Login> {
                         border: OutlineInputBorder(),
                         hintText: 'Enter Password'),
                   ),
+                  TextButton(
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed("/register"),
+                      child: const Text("Don't have an account? SIGN UP")),
                   ElevatedButton(onPressed: login, child: const Text("SIGN IN"))
                 ],
               ),

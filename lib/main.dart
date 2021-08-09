@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/login.dart';
-// import 'package:flutter_firebase/register.dart';
+import 'package:flutter_firebase/register.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_firebase/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,12 @@ class _MyAppState extends State<MyApp> {
               primarySwatch: Colors.purple,
             ),
             home: Login(),
+            routes: {
+              // "/": (context) => Login(),
+              "/login": (context) => Login(),
+              "/register": (context) => Register(),
+              "/home": (context) => Home()
+            },
           );
         }
 

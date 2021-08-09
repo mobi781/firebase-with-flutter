@@ -96,7 +96,11 @@ class _RegisterState extends State<Register> {
                         hintText: 'Enter Password'),
                   ),
                   ElevatedButton(
-                      onPressed: collectData, child: const Text("SIGN UP"))
+                      onPressed: collectData, child: const Text("SIGN UP")),
+                  TextButton(
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed("/login"),
+                      child: const Text("Already have an account? SIGN IN")),
                 ],
               ),
             ),
