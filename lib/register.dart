@@ -29,6 +29,8 @@ class _RegisterState extends State<Register> {
         "username": username,
         "email": email,
       });
+      print("signup Button pressed and username value is " + username);
+      print("Congratulations " + username + "has been added to database");
       // it will clear inputfields
       userNameController.clear();
       userEmailController.clear();
@@ -45,8 +47,6 @@ class _RegisterState extends State<Register> {
       print(e);
     }
     // ignore: avoid_print
-    print("signup Button pressed and username value is " + username);
-    print("Congratulations " + username + "has been added to database");
   }
 
   @override

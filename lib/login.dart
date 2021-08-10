@@ -29,10 +29,12 @@ class _LoginState extends State<Login> {
 
       final DocumentSnapshot snapshot =
           await db.collection("client").doc(user.user.uid).get();
-      final user = snapshot.data();
 
-      print(user["email"]);
+      //here we have to tell the compiler about our data type is "Map"
+      final Map data = snapshot.data();
+
       print("User is Logged in");
+      print(data["username"]);
       Navigator.of(context).pushNamed("/home");
     } catch (e) {
       print("we got following error :" + e);
