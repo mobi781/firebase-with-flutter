@@ -16,18 +16,17 @@ class _RegisterState extends State<Register> {
   final TextEditingController userPasswordController = TextEditingController();
   void collectData() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseFirestore db = FirebaseFirestore.instance;
     final String username = userNameController.text;
     final String email = userEmailController.text;
     final String password = userPasswordController.text;
     try {
-      final UserCredential userId =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final UserCredential user = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      await firestore.collection("client").doc(userId.user.uid).set({
-        "userName": username,
+      await db.collection("client").doc(user.user.uid).set({
+        "username": username,
         "email": email,
       });
       // it will clear inputfields

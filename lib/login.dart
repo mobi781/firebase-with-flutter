@@ -11,24 +11,27 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController userEmailController = TextEditingController();
-  final TextEditingController userPasswordController = TextEditingController();
+  final TextEditingController userEmailController =
+      TextEditingController(text: "mrmobi@ymail.com");
+  final TextEditingController userPasswordController =
+      TextEditingController(text: "12345678");
 
   void login() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
     final String email = userEmailController.text;
     final String password = userPasswordController.text;
 
     try {
-      final UserCredential users = await auth.signInWithEmailAndPassword(
+      final UserCredential user = await auth.signInWithEmailAndPassword(
           email: email, password: password);
 
       final DocumentSnapshot snapshot =
-          await firestore.collection("client").doc(users.user.uid).get();
+          await db.collection("client").doc(user.user.uid).get();
       final user = snapshot.data();
-      print(user);
+
+      print(user["email"]);
       print("User is Logged in");
       Navigator.of(context).pushNamed("/home");
     } catch (e) {
