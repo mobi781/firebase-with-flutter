@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // ignore: use_key_in_widget_constructors
 class Login extends StatefulWidget {
@@ -16,10 +18,9 @@ class _LoginState extends State<Login> {
   final TextEditingController userPasswordController =
       TextEditingController(text: "12345678");
 
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
   void login() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
     final String email = userEmailController.text;
     final String password = userPasswordController.text;
 
@@ -39,7 +40,56 @@ class _LoginState extends State<Login> {
     } catch (e) {
       print("we got following error :" + e);
     }
-    // ignore: avoid_print
+  }
+  //for google SignIN
+
+  void withGoogle() async {
+    final swg = await signInWithGoogle();
+    print(swg);
+    if (swg != null) {
+      Navigator.of(context).pushNamed("/home");
+    } else {
+      print("Sorry user can't sign in please try later");
+    }
+  }
+
+  // ignore: missing_return
+  Future<User> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow and signin with google for obtaining user details
+      // Obtain the auth details from the request with google
+      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential for firebase which will use on firebase auth
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // signing in with obove credential on firebase
+
+      final userCredential = await auth.signInWithCredential(credential);
+      final User user = userCredential.user;
+
+      // check for null value or anonymous signin
+      assert(user.isAnonymous, "anonymous sign in not allowed");
+      assert(
+          await user.getIdToken() != null, "userValue cannot be equal to null");
+      final User currentUser = await auth.currentUser;
+      assert(
+          currentUser.uid == user.uid, "userid didn't match with current user");
+      print(user);
+      return user;
+
+      // Once signed in, return the UserCredential
+
+      // return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -84,7 +134,19 @@ class _LoginState extends State<Login> {
                       onPressed: () =>
                           Navigator.of(context).pushNamed("/register"),
                       child: const Text("Don't have an account? SIGN UP")),
-                  ElevatedButton(onPressed: login, child: const Text("SIGN IN"))
+                  ElevatedButton(
+                      onPressed: login, child: const Text("SIGN IN")),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                    ),
+                    onPressed: withGoogle,
+                    icon: const FaIcon(FontAwesomeIcons.google,
+                        color: Colors.red),
+                    label: const Text("sign in with Google"),
+                  ),
                 ],
               ),
             ),
