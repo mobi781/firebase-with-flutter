@@ -47,6 +47,8 @@ class _LoginState extends State<Login> {
     final swg = await signInWithGoogle();
     print(swg);
     if (swg != null) {
+      await print(swg);
+      // Navigator.pushReplacement(context, newRoute)
       Navigator.of(context).pushNamed("/home");
     } else {
       print("Sorry user can't sign in please try later");
@@ -75,7 +77,7 @@ class _LoginState extends State<Login> {
       final User user = userCredential.user;
 
       // check for null value or anonymous signin
-      assert(user.isAnonymous, "anonymous sign in not allowed");
+      assert(!user.isAnonymous, "anonymous sign in not allowed");
       assert(
           await user.getIdToken() != null, "userValue cannot be equal to null");
       final User currentUser = await auth.currentUser;
